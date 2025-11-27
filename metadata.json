@@ -1,0 +1,5 @@
+{
+  "name": "Morphing Particles to Text",
+  "description": "A 3D visualization where particles morph between a sphere and user-input text using Three.js and GSAP.",
+  "requestFramePermissions": []
+}
