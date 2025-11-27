@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Morphing Particles to Text</title>
+    <!-- Keeping Tailwind CDN for simplicity, though normally installed via npm -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       body, html { margin: 0; padding: 0; overflow: hidden; background-color: #050505; color: white; }
@@ -11,16 +12,20 @@
   <script type="importmap">
 {
   "imports": {
+    "vite": "https://aistudiocdn.com/vite@^7.2.4",
     "three": "https://aistudiocdn.com/three@^0.181.2",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "gsap": "https://aistudiocdn.com/gsap@^3.13.0"
+    "gsap": "https://aistudiocdn.com/gsap@^3.13.0",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
   }
 }
 </script>
 </head>
   <body>
     <div id="root"></div>
+    <!-- This script tag tells Vite where to start the application -->
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
