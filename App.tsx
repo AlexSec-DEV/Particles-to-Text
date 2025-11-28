@@ -4,6 +4,7 @@ import MorphingScene from './components/MorphingScene';
 const App: React.FC = () => {
   const [text, setText] = useState<string>('');
   const [debouncedText, setDebouncedText] = useState<string>('');
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
 
   // Debounce the text input to prevent restarting animation on every keystroke instantly
   useEffect(() => {
@@ -15,6 +16,51 @@ const App: React.FC = () => {
       clearTimeout(handler);
     };
   }, [text]);
+
+  // Handle Fullscreen toggle and sync state with browser events
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const doc = document as any;
+      const isFull = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+      setIsFullscreen(isFull);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange); // Safari/Chrome legacy
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange); // Firefox legacy
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange); // IE legacy
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
+  }, []);
+
+  const toggleFullscreen = () => {
+    const doc = document as any;
+    const docEl = doc.documentElement as any;
+
+    const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
+    const cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+    const isFull = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+
+    if (!isFull) {
+      if (requestFullScreen) {
+        requestFullScreen.call(docEl).catch((err: any) => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        console.warn("Fullscreen API is not supported in this browser.");
+      }
+    } else {
+      if (cancelFullScreen) {
+        cancelFullScreen.call(doc);
+      }
+    }
+  };
 
   return (
     <div className="relative w-full h-screen bg-black overflow-hidden font-sans">
@@ -44,8 +90,27 @@ const App: React.FC = () => {
         }
       `}</style>
 
+      {/* Fullscreen Toggle Button */}
+      <button
+        onClick={toggleFullscreen}
+        className="absolute top-8 right-8 z-50 text-white/60 hover:text-white transition-all duration-300 transform hover:scale-110 focus:outline-none"
+        title={isFullscreen ? "Tam Ekrandan Çık" : "Tam Ekran Yap"}
+      >
+        {isFullscreen ? (
+          // Minimize Icon
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+          </svg>
+        ) : (
+          // Maximize Icon
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+          </svg>
+        )}
+      </button>
+
       {/* UI Layer */}
-      <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-end pb-12">
+      <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-end pb-8">
         <div className="pointer-events-auto w-11/12 max-w-md">
           <input
             id="textInput"
