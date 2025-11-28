@@ -17,42 +17,57 @@ const App: React.FC = () => {
   }, [text]);
 
   return (
-    <div className="relative w-full h-screen bg-black overflow-hidden">
+    <div className="relative w-full h-screen bg-black overflow-hidden font-sans">
       {/* 3D Scene Layer */}
       <div className="absolute inset-0 z-0">
         <MorphingScene text={debouncedText} />
       </div>
 
+      {/* Custom Styles for Glow Animation */}
+      <style>{`
+        @keyframes border-pulse {
+          0% {
+            box-shadow: 0 0 15px rgba(189, 0, 255, 0.6), inset 0 0 10px rgba(189, 0, 255, 0.2);
+            border-color: #bd00ff;
+          }
+          50% {
+            box-shadow: 0 0 25px rgba(30, 58, 138, 0.8), inset 0 0 15px rgba(30, 58, 138, 0.3);
+            border-color: #1e3a8a; /* Deep Blue */
+          }
+          100% {
+            box-shadow: 0 0 15px rgba(189, 0, 255, 0.6), inset 0 0 10px rgba(189, 0, 255, 0.2);
+            border-color: #bd00ff;
+          }
+        }
+        .glow-input {
+          animation: border-pulse 4s infinite ease-in-out;
+        }
+      `}</style>
+
       {/* UI Layer */}
-      <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-end pb-8">
-        <div className="pointer-events-auto w-11/12 max-w-md bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-2xl transition-all hover:bg-white/15">
-          <label 
-            htmlFor="textInput" 
-            className="block text-gray-300 text-sm font-semibold mb-2 uppercase tracking-wider"
-          >
-            Metni Değiştir
-          </label>
+      <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-end pb-12">
+        <div className="pointer-events-auto w-11/12 max-w-md">
           <input
             id="textInput"
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Yazı yazın..."
-            className="w-full bg-black/50 text-white placeholder-gray-500 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+            placeholder="METİN YAZIN..."
+            className="w-full bg-black/60 backdrop-blur-md text-white placeholder-gray-500 text-center font-bold tracking-widest rounded-full px-6 py-4 focus:outline-none transition-all glow-input border-2"
+            style={{ borderStyle: 'solid' }}
             maxLength={15}
           />
-          <p className="mt-3 text-xs text-gray-400 text-center">
-            Boş bırakırsanız küreye dönüşür.
-          </p>
         </div>
       </div>
       
       {/* Title/Overlay */}
-      <div className="absolute top-8 left-8 z-10 pointer-events-none">
-        <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-white">
+      <div className="absolute top-8 left-8 z-10 pointer-events-none select-none">
+        <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-white drop-shadow-[0_0_10px_rgba(189,0,255,0.5)]">
           Kenan Aliyev
         </h1>
-        <p className="text-sm text-gray-400 mt-1 uppercase tracking-[0.2em] font-light">Partüküler</p>
+        <p className="text-xs text-purple-300 mt-1 uppercase tracking-[0.3em] font-medium opacity-80 pl-1">
+          Partüküler
+        </p>
       </div>
     </div>
   );
